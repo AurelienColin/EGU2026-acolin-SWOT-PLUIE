@@ -1,0 +1,252 @@
+% clsposter.sty — CLS Corporate Poster Theme (2026)
+% Self-contained: no external poster-theme dependencies beyond standard packages
+% Derived from CLS PowerPoint "Personnalise 13" color scheme
+% and LPS2025 poster layout (A0 portrait, 3-column)
+
+\ProvidesPackage{clsposter}[2026/04/01 CLS Corporate Poster Theme]
+
+% ---------------------------------------------------------------------------
+% Required packages
+% ---------------------------------------------------------------------------
+\RequirePackage{tikz}
+\RequirePackage{graphicx}
+\RequirePackage{calc}
+\RequirePackage{etoolbox}
+\RequirePackage{tgheros}          % TeX Gyre Heros (Franklin Gothic Book substitute)
+\RequirePackage{ragged2e}
+
+\usetikzlibrary{calc}
+
+% ---------------------------------------------------------------------------
+% Font configuration
+% ---------------------------------------------------------------------------
+\renewcommand{\familydefault}{\sfdefault}
+
+% ---------------------------------------------------------------------------
+% CLS Color Palette (from CLS PPT "Personnalise 13")
+% ---------------------------------------------------------------------------
+\definecolor{CLSRed}{HTML}{F02D42}
+\definecolor{CLSTeal}{HTML}{29AEA3}
+\definecolor{CLSBlue}{HTML}{0C71A8}
+\definecolor{CLSGreen}{HTML}{39CC96}
+\definecolor{CLSLightBlue}{HTML}{1087C9}
+\definecolor{CLSLimeGreen}{HTML}{A2CD3A}
+\definecolor{CLSDarkGray}{HTML}{575757}
+\definecolor{CLSBlack}{HTML}{000000}
+\definecolor{CLSWhite}{HTML}{FFFFFF}
+
+% Gradient endpoints (title bar, footline)
+\definecolor{CLSGradientBlue}{HTML}{0B6FA8}
+\definecolor{CLSGradientGreen}{HTML}{39CD93}
+
+% Block backgrounds
+\definecolor{CLSLightGray}{HTML}{F5F5F5}
+\definecolor{CLSBlockBorder}{HTML}{DDDDDD}
+
+% ---------------------------------------------------------------------------
+% Beamer color assignments
+% ---------------------------------------------------------------------------
+\setbeamercolor{normal text}{fg=CLSDarkGray, bg=CLSWhite}
+\setbeamercolor{structure}{fg=CLSBlue}
+\setbeamercolor{alerted text}{fg=CLSRed}
+\setbeamercolor{example text}{fg=CLSTeal}
+
+\setbeamercolor{block title}{fg=CLSWhite, bg=CLSBlue}
+\setbeamercolor{block body}{fg=CLSDarkGray, bg=CLSLightGray}
+\setbeamercolor{block title alerted}{fg=CLSWhite, bg=CLSRed}
+\setbeamercolor{block body alerted}{fg=CLSDarkGray, bg=CLSLightGray}
+\setbeamercolor{block title example}{fg=CLSWhite, bg=CLSTeal}
+\setbeamercolor{block body example}{fg=CLSDarkGray, bg=CLSLightGray}
+
+\setbeamercolor{item}{fg=CLSBlue}
+\setbeamercolor{subitem}{fg=CLSTeal}
+\setbeamercolor{subsubitem}{fg=CLSGreen}
+
+\setbeamercolor{caption name}{fg=CLSBlue}
+
+% ---------------------------------------------------------------------------
+% Remove default navigation symbols
+% ---------------------------------------------------------------------------
+\setbeamertemplate{navigation symbols}{}
+
+% ---------------------------------------------------------------------------
+% Itemize markers
+% ---------------------------------------------------------------------------
+\setbeamertemplate{itemize item}{\color{CLSBlue}\raisebox{0.15ex}{\small$\bullet$}}
+\setbeamertemplate{itemize subitem}{\color{CLSTeal}\raisebox{0.15ex}{\scriptsize$\bullet$}}
+\setbeamertemplate{itemize subsubitem}{\color{CLSGreen}\raisebox{0.15ex}{\scriptsize$\circ$}}
+
+% ---------------------------------------------------------------------------
+% Bibliography template — show [n] numbers instead of beamer icons
+% ---------------------------------------------------------------------------
+\setbeamertemplate{bibliography item}[text]
+
+% ---------------------------------------------------------------------------
+% Poster header dimensions
+% ---------------------------------------------------------------------------
+\newlength{\posterheaderheight}
+\setlength{\posterheaderheight}{16cm}
+
+\newlength{\logoheight}
+\setlength{\logoheight}{5cm}
+
+% ---------------------------------------------------------------------------
+% Metadata commands
+% ---------------------------------------------------------------------------
+\makeatletter
+
+\newcommand{\postertitle}[1]{\def\@postertitle{#1}}
+\newcommand{\posterauthor}[1]{\def\@posterauthor{#1}}
+\newcommand{\posterinstitute}[1]{\def\@posterinstitute{#1}}
+\newcommand{\posterconference}[1]{\def\@posterconference{#1}}
+\newcommand{\posterdate}[1]{\def\@posterdate{#1}}
+% Partner logos: comma-separated list of image paths (displayed right of CLS logo)
+\newcommand{\posterlogos}[1]{\def\@posterlogos{#1}}
+
+% Defaults
+\postertitle{Poster Title}
+\posterauthor{Author}
+\posterinstitute{Institute}
+\posterconference{Conference}
+\posterdate{\today}
+\posterlogos{}
+
+% ---------------------------------------------------------------------------
+% Title block (TikZ gradient header — replaces LPS2025 background image)
+% ---------------------------------------------------------------------------
+\renewcommand{\maketitle}{%
+  \begin{tikzpicture}[remember picture, overlay]
+    % Gradient header bar
+    \fill[left color=CLSGradientBlue, right color=CLSGradientGreen]
+      (current page.north west) rectangle
+      ([yshift=-\posterheaderheight]current page.north east);
+
+    % Thin accent line at bottom of header
+    \fill[CLSRed]
+      ([yshift=-\posterheaderheight]current page.north west) rectangle
+      ([yshift=-\posterheaderheight-0.4cm]current page.north east);
+
+    % CLS logo — top-left
+    \node[anchor=north west, inner sep=0pt] (clslogo) at
+      ([xshift=3cm, yshift=-1.5cm]current page.north west)
+      {\includegraphics[height=\logoheight]{images/cls_logo.png}};
+
+    % Partner logos — right of CLS logo, top-aligned
+    \ifx\@posterlogos\empty\else
+      \node[anchor=north west, inner sep=0pt] at (clslogo.north east)
+        {\@posterlogos};
+    \fi
+
+    % Conference and date — top-right
+    \node[anchor=north east, text=CLSWhite, align=right, font=\large] at
+      ([xshift=-3cm, yshift=-2cm]current page.north east)
+      {\@posterconference\\[0.3em]\@posterdate};
+
+    % Title
+    \node[anchor=north west, text=CLSWhite, align=left,
+          font=\Huge\bfseries] (titlenode) at
+      ([xshift=3cm, yshift=-7cm]current page.north west)
+      {\parbox{0.90\paperwidth}{\@postertitle}};
+
+    % Authors
+    \node[anchor=north west, text=CLSWhite, align=left,
+          font=\Large] (authornode) at
+      ([yshift=-0.8cm]titlenode.south west)
+      {\@posterauthor};
+
+    % Institutes
+    \node[anchor=north west, text=CLSWhite, align=left,
+          font=\large] at
+      ([yshift=-0.4cm]authornode.south west)
+      {\parbox{0.90\paperwidth}{\@posterinstitute}};
+  \end{tikzpicture}%
+  \vspace*{\posterheaderheight}%
+  % Compensate beamer's internal frame top-skip (~5cm at scale 1.25)
+  \newlength{\beamerframeskipcompensation}
+  \setlength{\beamerframeskipcompensation}{-5cm}
+  \vspace{\beamerframeskipcompensation}%
+}
+
+% Reduce beamer's internal frame padding
+\setbeamersize{text margin left=0.5cm, text margin right=0.5cm}
+
+% Remove beamer's headline/head separator that creates the gap
+\setbeamertemplate{headline}{}
+\setbeamertemplate{frametitle}{}
+\addtobeamertemplate{frametitle}{\vspace*{-1cm}}{}
+\setlength{\headsep}{0pt}
+\setlength{\headheight}{0pt}
+
+% ---------------------------------------------------------------------------
+% Styled block environment (rounded, CLS-branded)
+% ---------------------------------------------------------------------------
+\newenvironment{clsblock}[1]{%
+  \begin{center}
+  \begin{tikzpicture}
+  \node[
+    draw=CLSBlue, line width=2pt,
+    fill=CLSLightGray,
+    rounded corners=5mm,
+    inner sep=12pt
+  ] (blockbox) \bgroup
+    \begin{minipage}{0.92\linewidth}
+      \vspace{0.3cm}
+      {\centering\Large\bfseries\textcolor{CLSBlue}{#1}\par}
+      \vspace{0.4cm}
+      \justifying
+}{%
+      \vspace{0.3cm}
+    \end{minipage}
+  \egroup;
+  % Accent line at top of block
+  \draw[left color=CLSGradientBlue, right color=CLSGradientGreen, line width=3pt]
+    ([yshift=0pt]blockbox.north west) -- ([yshift=0pt]blockbox.north east);
+  \end{tikzpicture}
+  \end{center}
+}
+
+% Highlighted block (teal fill for key results)
+\newenvironment{clshighlight}[1]{%
+  \begin{center}
+  \begin{tikzpicture}
+  \node[
+    draw=CLSTeal, line width=2pt,
+    fill=CLSTeal!10,
+    rounded corners=5mm,
+    inner sep=12pt
+  ] (blockbox) \bgroup
+    \begin{minipage}{0.92\linewidth}
+      \vspace{0.3cm}
+      {\centering\Large\bfseries\textcolor{CLSTeal}{#1}\par}
+      \vspace{0.4cm}
+      \justifying
+}{%
+      \vspace{0.3cm}
+    \end{minipage}
+  \egroup;
+  \draw[CLSTeal, line width=3pt]
+    (blockbox.north west) -- (blockbox.north east);
+  \end{tikzpicture}
+  \end{center}
+}
+
+% ---------------------------------------------------------------------------
+% Footer bar
+% ---------------------------------------------------------------------------
+\newcommand{\posterfooter}{%
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[left color=CLSGradientBlue, right color=CLSGradientGreen]
+      (current page.south west) rectangle
+      ([yshift=2cm]current page.south east);
+    \node[anchor=south east] at
+      ([xshift=-2cm, yshift=0.3cm]current page.south east)
+      {\includegraphics[height=1.2cm]{images/cls_logo.png}};
+  \end{tikzpicture}%
+}
+
+\makeatother
+
+% ---------------------------------------------------------------------------
+% End of theme
+% ---------------------------------------------------------------------------
+\endinput
