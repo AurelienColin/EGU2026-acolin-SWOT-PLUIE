@@ -100,7 +100,7 @@
 \newlength{\posterfooterlogoheight}
 
 \ifclsposterlandscape
-  \setlength{\posterheaderheight}{18cm}
+  \setlength{\posterheaderheight}{20cm}
   \setlength{\logoheight}{4cm}
   \setlength{\posterfooterheight}{3cm}
   \setlength{\posterfooterlogoheight}{2cm}
@@ -133,10 +133,15 @@
 \posterlogos{}
 
 % ---------------------------------------------------------------------------
-% Title block (TikZ gradient header — auto-sizing with fallback)
+% Title block (TikZ gradient header — fixed height for reliable layout)
 % ---------------------------------------------------------------------------
 \renewcommand{\maketitle}{%
   \begin{tikzpicture}[remember picture, overlay]
+    % Gradient header bar — full width, fixed height
+    \fill[left color=CLSGradientBlue, right color=CLSGradientGreen]
+      (current page.north west) rectangle
+      ([yshift=-\posterheaderheight]current page.north east);
+
     % CLS logo — top-left (white version on gradient)
     \node[anchor=north west, inner sep=0pt] (clslogo) at
       ([xshift=3cm, yshift=-1.5cm]current page.north west)
@@ -149,52 +154,37 @@
     \fi
 
     % Conference and date — top-right
-    \node[anchor=north east, text=CLSWhite, align=right, font=\Large] at
-      ([xshift=-3cm, yshift=-2cm]current page.north east)
+    \node[anchor=north east, text=CLSWhite, align=right, font=\LARGE] at
+      ([xshift=-3cm, yshift=-2.5cm]current page.north east)
       {\@posterconference\\[0.3em]\@posterdate};
 
-    % Title
+    % Title — start below logo row
     \node[anchor=north west, text=CLSWhite, align=left,
-          font=\VERYHuge\bfseries] (titlenode) at
-      ([xshift=3cm, yshift=-8cm]current page.north west)
-      {\parbox{0.90\paperwidth}{\@postertitle}};
+          font=\Huge\bfseries] (titlenode) at
+      ([xshift=3cm, yshift=-9cm]current page.north west)
+      {\parbox{0.88\paperwidth}{\@postertitle}};
 
     % Authors
     \node[anchor=north west, text=CLSWhite, align=left,
           font=\LARGE] (authornode) at
-      ([yshift=-1cm]titlenode.south west)
+      ([yshift=-1.5cm]titlenode.south west)
       {\@posterauthor};
 
     % Institutes
     \node[anchor=north west, text=CLSWhite, align=left,
-          font=\Large] (institutenode) at
-      ([yshift=-0.5cm]authornode.south west)
-      {\parbox{0.90\paperwidth}{\@posterinstitute}};
-
-    % Gradient header bar — drawn behind all nodes, extends to
-    % the maximum of \posterheaderheight and 1.5cm below institutes
-    \begin{scope}[on background layer]
-      \fill[left color=CLSGradientBlue, right color=CLSGradientGreen]
-        (current page.north west) rectangle
-        ([yshift=-1.5cm]institutenode.south -| current page.north east);
-    \end{scope}
+          font=\Large] at
+      ([yshift=-0.8cm]authornode.south west)
+      {\parbox{0.88\paperwidth}{\@posterinstitute}};
   \end{tikzpicture}%
   \vspace*{\posterheaderheight}%
-  % Compensate beamer's internal frame top-skip (~5cm at scale 1.4)
-  \newlength{\beamerframeskipcompensation}
-  \setlength{\beamerframeskipcompensation}{-5cm}
-  \vspace{\beamerframeskipcompensation}%
 }
 
-% Reduce beamer's internal frame padding
-\setbeamersize{text margin left=0.5cm, text margin right=0.5cm}
+% Poster body margins
+\setbeamersize{text margin left=1.5cm, text margin right=1.5cm}
 
-% Remove beamer's headline/head separator that creates the gap
+% Remove beamer's default headline and frametitle
 \setbeamertemplate{headline}{}
 \setbeamertemplate{frametitle}{}
-\addtobeamertemplate{frametitle}{\vspace*{-1cm}}{}
-\setlength{\headsep}{0pt}
-\setlength{\headheight}{0pt}
 
 % ---------------------------------------------------------------------------
 % Styled block environment (rounded, CLS-branded)
