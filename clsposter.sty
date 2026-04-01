@@ -123,6 +123,9 @@
 \newcommand{\posterdate}[1]{\def\@posterdate{#1}}
 % Partner logos: comma-separated list of image paths (displayed right of CLS logo)
 \newcommand{\posterlogos}[1]{\def\@posterlogos{#1}}
+% QR code image path (displayed top-right in header, below conference info)
+% Usage: \posterqrcode{images/qrcode.png}
+\newcommand{\posterqrcode}[1]{\def\@posterqrcode{#1}}
 
 % Defaults
 \postertitle{Poster Title}
@@ -131,6 +134,7 @@
 \posterconference{Conference}
 \posterdate{\today}
 \posterlogos{}
+\posterqrcode{}
 
 % ---------------------------------------------------------------------------
 % Title block (TikZ gradient header — fixed height for reliable layout)
@@ -154,9 +158,17 @@
     \fi
 
     % Conference and date — top-right
-    \node[anchor=north east, text=CLSWhite, align=right, font=\LARGE] at
+    \node[anchor=north east, text=CLSWhite, align=right, font=\LARGE] (confnode) at
       ([xshift=-3cm, yshift=-2.5cm]current page.north east)
       {\@posterconference\\[0.3em]\@posterdate};
+
+    % QR code — below conference info, top-right
+    \ifx\@posterqrcode\empty\else
+      \node[anchor=north east, inner sep=0pt] at
+        ([yshift=-1cm]confnode.south east)
+        {\fcolorbox{CLSWhite}{CLSWhite}{%
+          \includegraphics[height=5cm]{\@posterqrcode}}};
+    \fi
 
     % Title — start below logo row
     \node[anchor=north west, text=CLSWhite, align=left,
