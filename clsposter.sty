@@ -85,7 +85,7 @@
 % Poster header dimensions
 % ---------------------------------------------------------------------------
 \newlength{\posterheaderheight}
-\setlength{\posterheaderheight}{16cm}
+\setlength{\posterheaderheight}{20cm}
 
 \newlength{\logoheight}
 \setlength{\logoheight}{5cm}
@@ -121,11 +121,6 @@
       (current page.north west) rectangle
       ([yshift=-\posterheaderheight]current page.north east);
 
-    % Thin accent line at bottom of header
-    \fill[CLSRed]
-      ([yshift=-\posterheaderheight]current page.north west) rectangle
-      ([yshift=-\posterheaderheight-0.4cm]current page.north east);
-
     % CLS logo — top-left
     \node[anchor=north west, inner sep=0pt] (clslogo) at
       ([xshift=3cm, yshift=-1.5cm]current page.north west)
@@ -145,7 +140,7 @@
     % Title
     \node[anchor=north west, text=CLSWhite, align=left,
           font=\Huge\bfseries] (titlenode) at
-      ([xshift=3cm, yshift=-7cm]current page.north west)
+      ([xshift=3cm, yshift=-8cm]current page.north west)
       {\parbox{0.90\paperwidth}{\@postertitle}};
 
     % Authors
