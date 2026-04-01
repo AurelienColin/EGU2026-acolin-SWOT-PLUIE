@@ -6,6 +6,16 @@
 \ProvidesPackage{clsposter}[2026/04/01 CLS Corporate Poster Theme]
 
 % ---------------------------------------------------------------------------
+% Package options: landscape / portrait
+% ---------------------------------------------------------------------------
+\newif\ifclsposterlandscape
+\clsposterlandscapefalse
+
+\DeclareOption{landscape}{\clsposterlandscapetrue}
+\DeclareOption{portrait}{\clsposterlandscapefalse}
+\ProcessOptions\relax
+
+% ---------------------------------------------------------------------------
 % Required packages
 % ---------------------------------------------------------------------------
 \RequirePackage{tikz}
@@ -15,7 +25,7 @@
 \RequirePackage{tgheros}          % TeX Gyre Heros (Franklin Gothic Book substitute)
 \RequirePackage{ragged2e}
 
-\usetikzlibrary{calc}
+\usetikzlibrary{calc, backgrounds}
 
 % ---------------------------------------------------------------------------
 % Font configuration
@@ -82,13 +92,24 @@
 \setbeamertemplate{bibliography item}[text]
 
 % ---------------------------------------------------------------------------
-% Poster header dimensions
+% Poster header and footer dimensions (landscape-aware)
 % ---------------------------------------------------------------------------
 \newlength{\posterheaderheight}
-\setlength{\posterheaderheight}{20cm}
-
 \newlength{\logoheight}
-\setlength{\logoheight}{5cm}
+\newlength{\posterfooterheight}
+\newlength{\posterfooterlogoheight}
+
+\ifclsposterlandscape
+  \setlength{\posterheaderheight}{18cm}
+  \setlength{\logoheight}{4cm}
+  \setlength{\posterfooterheight}{3cm}
+  \setlength{\posterfooterlogoheight}{2cm}
+\else
+  \setlength{\posterheaderheight}{26cm}
+  \setlength{\logoheight}{5cm}
+  \setlength{\posterfooterheight}{4cm}
+  \setlength{\posterfooterlogoheight}{2.5cm}
+\fi
 
 % ---------------------------------------------------------------------------
 % Metadata commands
@@ -112,19 +133,14 @@
 \posterlogos{}
 
 % ---------------------------------------------------------------------------
-% Title block (TikZ gradient header — replaces LPS2025 background image)
+% Title block (TikZ gradient header — auto-sizing with fallback)
 % ---------------------------------------------------------------------------
 \renewcommand{\maketitle}{%
   \begin{tikzpicture}[remember picture, overlay]
-    % Gradient header bar
-    \fill[left color=CLSGradientBlue, right color=CLSGradientGreen]
-      (current page.north west) rectangle
-      ([yshift=-\posterheaderheight]current page.north east);
-
-    % CLS logo — top-left
+    % CLS logo — top-left (white version on gradient)
     \node[anchor=north west, inner sep=0pt] (clslogo) at
       ([xshift=3cm, yshift=-1.5cm]current page.north west)
-      {\includegraphics[height=\logoheight]{images/cls_logo.png}};
+      {\includegraphics[height=\logoheight]{images/cls_logo_white.png}};
 
     % Partner logos — right of CLS logo, top-aligned
     \ifx\@posterlogos\empty\else
@@ -133,30 +149,38 @@
     \fi
 
     % Conference and date — top-right
-    \node[anchor=north east, text=CLSWhite, align=right, font=\large] at
+    \node[anchor=north east, text=CLSWhite, align=right, font=\Large] at
       ([xshift=-3cm, yshift=-2cm]current page.north east)
       {\@posterconference\\[0.3em]\@posterdate};
 
     % Title
     \node[anchor=north west, text=CLSWhite, align=left,
-          font=\Huge\bfseries] (titlenode) at
+          font=\VERYHuge\bfseries] (titlenode) at
       ([xshift=3cm, yshift=-8cm]current page.north west)
       {\parbox{0.90\paperwidth}{\@postertitle}};
 
     % Authors
     \node[anchor=north west, text=CLSWhite, align=left,
-          font=\Large] (authornode) at
-      ([yshift=-0.8cm]titlenode.south west)
+          font=\LARGE] (authornode) at
+      ([yshift=-1cm]titlenode.south west)
       {\@posterauthor};
 
     % Institutes
     \node[anchor=north west, text=CLSWhite, align=left,
-          font=\large] at
-      ([yshift=-0.4cm]authornode.south west)
+          font=\Large] (institutenode) at
+      ([yshift=-0.5cm]authornode.south west)
       {\parbox{0.90\paperwidth}{\@posterinstitute}};
+
+    % Gradient header bar — drawn behind all nodes, extends to
+    % the maximum of \posterheaderheight and 1.5cm below institutes
+    \begin{scope}[on background layer]
+      \fill[left color=CLSGradientBlue, right color=CLSGradientGreen]
+        (current page.north west) rectangle
+        ([yshift=-1.5cm]institutenode.south -| current page.north east);
+    \end{scope}
   \end{tikzpicture}%
   \vspace*{\posterheaderheight}%
-  % Compensate beamer's internal frame top-skip (~5cm at scale 1.25)
+  % Compensate beamer's internal frame top-skip (~5cm at scale 1.4)
   \newlength{\beamerframeskipcompensation}
   \setlength{\beamerframeskipcompensation}{-5cm}
   \vspace{\beamerframeskipcompensation}%
@@ -186,7 +210,7 @@
   ] (blockbox) \bgroup
     \begin{minipage}{0.92\linewidth}
       \vspace{0.3cm}
-      {\centering\Large\bfseries\textcolor{CLSBlue}{#1}\par}
+      {\centering\LARGE\bfseries\textcolor{CLSBlue}{#1}\par}
       \vspace{0.4cm}
       \justifying
 }{%
@@ -212,7 +236,7 @@
   ] (blockbox) \bgroup
     \begin{minipage}{0.92\linewidth}
       \vspace{0.3cm}
-      {\centering\Large\bfseries\textcolor{CLSTeal}{#1}\par}
+      {\centering\LARGE\bfseries\textcolor{CLSTeal}{#1}\par}
       \vspace{0.4cm}
       \justifying
 }{%
@@ -226,16 +250,16 @@
 }
 
 % ---------------------------------------------------------------------------
-% Footer bar
+% Footer bar (gradient with white CLS logo)
 % ---------------------------------------------------------------------------
 \newcommand{\posterfooter}{%
   \begin{tikzpicture}[remember picture, overlay]
     \fill[left color=CLSGradientBlue, right color=CLSGradientGreen]
       (current page.south west) rectangle
-      ([yshift=2cm]current page.south east);
+      ([yshift=\posterfooterheight]current page.south east);
     \node[anchor=south east] at
-      ([xshift=-2cm, yshift=0.3cm]current page.south east)
-      {\includegraphics[height=1.2cm]{images/cls_logo.png}};
+      ([xshift=-2cm, yshift=0.5cm]current page.south east)
+      {\includegraphics[height=\posterfooterlogoheight]{images/cls_logo_white.png}};
   \end{tikzpicture}%
 }
 
