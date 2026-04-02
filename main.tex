@@ -4,7 +4,7 @@
 
 \documentclass[final]{beamer}
 \graphicspath{{images/}}
-\usepackage[orientation=landscape, size=a0, scale=1.1]{beamerposter}
+\usepackage[orientation=landscape, size=a0, scale=1.0]{beamerposter}
 
 % ---------------------------------------------------------------------------
 % Page geometry
@@ -118,7 +118,7 @@
 }
 
 \posterconference{EGU General Assembly 2026}
-\posterdate{27 April -- 2 May 2026, Vienna, Austria}
+\posterdate{3--8 May 2026, Vienna, Austria}
 
 \posterlogos{%
   \hspace{1.5cm}\includegraphics[height=4cm]{images/cnes_logo.png}%
@@ -129,6 +129,10 @@
 \begin{document}
 \begin{frame}{}
 
+% Reduce header height to close gap between logos and title
+\setlength{\posterheaderheight}{14cm}
+\setlength{\posterfooterheight}{2cm}
+\setlength{\posterfooterlogoheight}{1.5cm}
 \maketitle
 \vspace{-0.5cm}
 
@@ -138,25 +142,21 @@
   % --- Col 1: Introduction ---
   \begin{column}{0.32\linewidth}
     \begin{clsblock}{Introduction}
-      Precipitation is a fundamental component of the hydrological cycle,
-      yet rain rate estimation over the open ocean remains a challenge.
-      Ground-based radars such as NEXRAD~[1] provide high-resolution
-      measurements but are limited to coastal areas. Satellite products
-      like IMERG~[2] offer global coverage at $\sim$8~km resolution, too
-      coarse for fine-scale studies.
-
-      \vspace{0.15cm}
-      The Surface Water and Ocean Topography (SWOT) mission~[3] carries
-      the Ka-band Radar Interferometer (KaRIn), a SAR operating at
-      35.75~GHz. Originally designed for altimetry, KaRIn is sensitive to
-      atmospheric hydrometeors at \textbf{250~m/pixel}---matching NEXRAD
-      resolution in range---and provides continuous data over both coastal
-      zones and open ocean.
-
-      \vspace{0.15cm}
-      We present a machine learning framework to estimate precipitation
-      rates from SWOT 250~m observations, trained against NEXRAD
-      collocations and validated with independent IMERG time series.
+      \begin{itemize}\setlength{\itemsep}{3pt}
+        \item Rain rate estimation over the open ocean remains a challenge:
+              ground radars (NEXRAD~[1]) are coastal-only; satellite
+              products (IMERG~[2]) offer global coverage but at
+              $\sim$8~km resolution, too coarse for fine-scale studies.
+        \item The SWOT mission~[3] carries the Ka-band Radar
+              Interferometer (KaRIn), a SAR at 35.75~GHz. Originally
+              designed for altimetry, KaRIn is sensitive to atmospheric
+              hydrometeors at \textbf{250~m/pixel}---matching NEXRAD
+              resolution in range---over both coastal zones and open ocean.
+        \item We present a machine learning framework to estimate
+              precipitation rates from SWOT 250~m observations, trained
+              against NEXRAD collocations and validated with independent
+              IMERG time series.
+      \end{itemize}
     \end{clsblock}
   \end{column}
 
@@ -164,31 +164,39 @@
   \begin{column}{0.34\linewidth}
     \begin{clsblock}{Data \& Methods}
       \textbf{Training dataset.}
-      A NEXRAD/SWOT collocation dataset of \textbf{7\,009 patches}
-      (512$\times$512~px at 250~m/pixel) was built between August 2023 and
-      February 2025. Among these, 1\,090 patches contain precipitation
-      ($>$1~mm/h on $>$1\% of pixels). Collocations are restricted to
-      $<$3~min temporal offset and $<$170~km range from a WSR-88D station.
+      \begin{itemize}\setlength{\itemsep}{2pt}
+        \item \textbf{7\,009} NEXRAD/SWOT patches
+              (512$\times$512~px at 250~m/pixel), Aug 2023--Feb 2025.
+        \item 1\,090 patches with precipitation
+              ($>$1~mm/h on $>$1\% of pixels).
+        \item Collocation constraints: $<$3~min temporal offset,
+              $<$170~km range from a WSR-88D station.
+      \end{itemize}
 
-      \vspace{0.15cm}
+      \vspace{0.1cm}
       \textbf{Model architecture.}
-      A U-Net (depth=4, Swish activation, BatchNorm) takes four input
-      channels: incidence-corrected $\sigma_0$ (dB), total coherence,
-      incidence angle, and model wind speed (projected from the 2~km
-      product). The output is a pixel-wise precipitation rate (mm/h).
+      \begin{itemize}\setlength{\itemsep}{2pt}
+        \item U-Net (depth=4, Swish activation, BatchNorm).
+        \item Four input channels: incidence-corrected $\sigma_0$ (dB),
+              total coherence, incidence angle, model wind speed
+              (projected from the 2~km product).
+        \item Output: pixel-wise precipitation rate (mm/h).
+      \end{itemize}
 
-      \vspace{0.15cm}
+      \vspace{0.1cm}
       \textbf{Training strategy.}
-      The loss combines regression MAE (99\%) and categorical MAE (1\%).
-      Pixel weights decay linearly with distance to the nearest NEXRAD
-      station (1 at 0~km, 0 at 225~km); null-DPR pixels are
-      down-weighted to 0.1\%. Quantile mapping aligns the output
-      distribution with NEXRAD statistics.
+      \begin{itemize}\setlength{\itemsep}{2pt}
+        \item Loss: regression MAE (99\%) + categorical MAE (1\%).
+        \item Pixel weights decay linearly with distance to nearest
+              NEXRAD station (1 at 0~km, 0 at 225~km); null-DPR pixels
+              down-weighted to 0.1\%.
+        \item Quantile mapping aligns output distribution with NEXRAD.
+      \end{itemize}
 
-      \vspace{0.15cm}
+      \vspace{0.1cm}
       \textbf{Ensemble.}
-      Five independently trained models produce a consensus score based on
-      inter-model agreement, providing a proxy for prediction confidence.
+      Five independently trained models; consensus score from inter-model
+      agreement provides a proxy for prediction confidence.
     \end{clsblock}
   \end{column}
 
@@ -211,7 +219,7 @@
 
 \end{columns}
 
-\vspace{0.1cm}
+\vspace{0.05cm}
 
 % ===================== ROW 2 =====================
 \begin{columns}[T]
@@ -255,22 +263,15 @@
   % --- Col 2: IMERG validation + Mollweide ---
   \begin{column}{0.34\linewidth}
     \begin{clsblock}{Global Validation against IMERG}
-      \begin{columns}[T]
-        \begin{column}{0.48\linewidth}
-          \centering
-          \includegraphics[width=\linewidth]{images/mollweide_mean_rainfall.png}
-        \end{column}
-        \begin{column}{0.48\linewidth}
-          \centering
-          \includegraphics[width=\linewidth]{images/mollweide_pct_above_1mmh.png}
-        \end{column}
-      \end{columns}
-      \small Mean rainfall rate (left) and percentage of pixels
-      $>$1~mm/h (right) on a 1.0$^\circ$ grid (12\,007 passes).
-      The ITCZ is clearly delineated; spatial patterns match
-      IMERG climatology.
+      \centering
+      \includegraphics[width=0.7\linewidth]{images/mollweide_pct_above_1mmh.png}
 
-      \vspace{0.1cm}
+      \justifying
+      \small Percentage of pixels $>$1~mm/h (1.0$^\circ$ grid,
+      12\,007 passes). The ITCZ is sharply delineated in both
+      Pacific and Atlantic basins, consistent with IMERG climatology.
+
+      \vspace{0.05cm}
 
       \begin{columns}[T]
         \begin{column}{0.32\linewidth}
@@ -292,10 +293,12 @@
           \small North Atlantic\\ \textbf{r\,=\,$-$43\%}
         \end{column}
       \end{columns}
-      \vspace{0.05cm}
-      \small 21-day moving average vs.\ IMERG and ERA5. High
-      correlation in the tropics; sharp degradation in the North
-      Atlantic where stratiform precipitation dominates.
+      \justifying
+      \small 21-day moving average vs.\ IMERG and ERA5. Correlation
+      is high in the tropics (Pacific: 95\%, Atlantic: 75\%) but
+      \textbf{negative} in the North Atlantic ($-$43\%),
+      indicating difficulty with stratiform precipitation at
+      higher latitudes.
     \end{clsblock}
   \end{column}
 
