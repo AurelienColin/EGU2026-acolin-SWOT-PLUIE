@@ -1,14 +1,10 @@
-% CLS LaTeX Poster Template (2026)
-% A0 portrait, 3-column layout, CLS corporate branding
+% SWOT Rain EGU 2026 Poster
+% A0 landscape, CLS corporate branding
 % Compile with: make pdf (uses tectonic)
-%
-% Bibliography: uses thebibliography for portability.
-% To use biblatex instead, uncomment the biblatex lines below
-% and ensure biber is installed on your system.
 
 \documentclass[final]{beamer}
 \graphicspath{{images/}}
-\usepackage[orientation=portrait, size=a0, scale=1.4]{beamerposter}
+\usepackage[orientation=landscape, size=a0, scale=1.2]{beamerposter}
 
 % ---------------------------------------------------------------------------
 % Page geometry
@@ -16,9 +12,9 @@
 \usepackage{geometry}
 \geometry{
     top=0mm,
-    bottom=55mm,
-    left=30mm,
-    right=30mm
+    bottom=15mm,
+    left=15mm,
+    right=15mm
 }
 
 % ---------------------------------------------------------------------------
@@ -34,55 +30,44 @@
 \usepackage{hyperref}
 
 % ---------------------------------------------------------------------------
-% Optional: biblatex (requires biber — uncomment if available)
+% CLS Poster Theme (landscape mode)
 % ---------------------------------------------------------------------------
-% \usepackage[backend=biber, style=ieee, sorting=none]{biblatex}
-% \addbibresource{references.bib}
-
-% ---------------------------------------------------------------------------
-% CLS Poster Theme
-% ---------------------------------------------------------------------------
-\usepackage{clsposter}
+\usepackage[landscape]{clsposter}
 
 \hypersetup{colorlinks=true, urlcolor=CLSBlue, linkcolor=CLSBlue, citecolor=CLSBlue}
 
-% ============================================================
-% USER CONTENT — Edit below to customize your poster
-% ============================================================
+% ---------------------------------------------------------------------------
+% Compact spacing
+% ---------------------------------------------------------------------------
+\setlength{\parskip}{0pt}
+\setbeamersize{text margin left=0.8cm, text margin right=0.8cm}
+\setbeamerfont{caption}{size=\small}
+\setlength{\abovecaptionskip}{2pt}
+\setlength{\belowcaptionskip}{0pt}
 
-% ---------------------------------------------------------------------------
+% ===========================================================================
 % Poster metadata
-% ---------------------------------------------------------------------------
+% ===========================================================================
+
 \postertitle{%
-  Your Poster Title Goes Here: A Demonstration of the
-  CLS LaTeX Poster Template for Conference Presentations%
+  Precipitation Detection in Open Ocean with SWOT at Sub-Kilometer Resolution%
 }
 
 \posterauthor{%
-  First Author\textsuperscript{1},
-  Second Author\textsuperscript{1,2},
-  Third Author\textsuperscript{3}%
+  Aur\'elien Colin\textsuperscript{1}%
 }
 
 \posterinstitute{%
   \textsuperscript{1} Collecte Localisation Satellites (CLS),
-  Av. la P\'erouse, 29280 Plouzan\'e, France \\
-  \textsuperscript{2} Second Affiliation, City, Country \\
-  \textsuperscript{3} Third Affiliation, City, Country%
+  Av. la P\'erouse, 29280 Plouzan\'e, France%
 }
 
 \posterconference{EGU General Assembly 2026}
 \posterdate{27 April -- 2 May 2026, Vienna, Austria}
 
-% Partner logos (displayed right of CLS logo in header)
-% Add your partner logos here, e.g.:
-%   \posterlogos{\hspace{1.5cm}\includegraphics[height=5cm]{images/partner1.png}%
-%                \hspace{1.5cm}\includegraphics[height=5cm]{images/partner2.png}}
 \posterlogos{%
-  \hspace{1.5cm}\fcolorbox{CLSWhite}{white}{%
-    \parbox[c][4.5cm]{4.5cm}{\centering\color{CLSDarkGray}\small Partner\\Logo 1}}%
-  \hspace{1.5cm}\fcolorbox{CLSWhite}{white}{%
-    \parbox[c][4.5cm]{4.5cm}{\centering\color{CLSDarkGray}\small Partner\\Logo 2}}%
+  \hspace{1.5cm}\includegraphics[height=4cm]{images/cnes_logo.png}%
+  \hspace{1.5cm}\includegraphics[height=4cm]{images/fluctus_logo.png}%
 }
 
 % ===========================================================================
@@ -90,172 +75,153 @@
 \begin{frame}{}
 
 \maketitle
+\vspace{-0.3cm}
 
-% ---------------------------------------------------------------------------
-% Row 1: Introduction (1/3) | Large Figure (2/3)
-% ---------------------------------------------------------------------------
+% ===================== ROW 1 =====================
 \begin{columns}[T]
 
-  \begin{column}{0.32\linewidth}
-    \begin{clsblock}{Introduction}
-      \textbf{Context:}
-      \begin{itemize}
-        \item Describe the scientific context and motivation for your work;
-        \item Reference key prior studies [1] and identify the gap
-              your work addresses [2].
-      \end{itemize}
+  % --- Col 1: Introduction & Methods ---
+  \begin{column}{0.31\linewidth}
+    \begin{clsblock}{Introduction \& Methods}
+      \textbf{Gap:} Ground radars (NEXRAD) are coastal-only~[1].
+      Satellite products (IMERG) are coarse ($\sim$8~km)~[2].
+      Sentinel-1 SAR detects rain but has limited ocean coverage.
 
-      \textbf{Objectives:}
-      \begin{itemize}
-        \item State the primary objective of your study;
-        \item Outline secondary goals or expected contributions.
-      \end{itemize}
-    \end{clsblock}
+      \vspace{0.1cm}
+      \textbf{SWOT KaRIn:} Ka-band interferometer (35.75~GHz),
+      \textbf{250~m/pixel}, sensitive to hydrometeors,
+      global ocean coverage~[3].
 
-    \vspace{0.4cm}
+      \vspace{0.1cm}
+      \textbf{Dataset:} 7\,009 NEXRAD/SWOT patches
+      (512$\times$512~px, Aug 2023--Feb 2025),
+      1\,090 with precipitation ($>$1~mm/h on $>$1\% of pixels).
 
-    \begin{clsblock}{Data and Methods}
-      \textbf{Data sources:}
-      \begin{itemize}
-        \item Source A: description, resolution, and coverage;
-        \item Source B: description, resolution, and coverage;
-        \item Ancillary: auxiliary datasets used.
-      \end{itemize}
-
-      \textbf{Approach:}
-      \begin{itemize}
-        \item Step 1 of the methodology;
-        \item Step 2 of the methodology;
-        \item Step 3 of the methodology.
-      \end{itemize}
-
-      A key equation of the method:
-      \begin{equation}
-        f(x) = ax^2 + bx + c
-      \end{equation}
+      \vspace{0.1cm}
+      \textbf{U-Net:} $\sigma_0$ + coherence + incidence angle
+      + wind prior $\rightarrow$ precipitation rate (mm/h).
+      Spatially weighted loss. Quantile mapping. Ensemble consensus.
     \end{clsblock}
   \end{column}
 
-  \begin{column}{0.66\linewidth}
-    \begin{clshighlight}{Main Result}
-      \begin{figure}
-        \centering
-        \fcolorbox{CLSBlue}{CLSLightGray}{%
-          \parbox{0.85\linewidth}{%
-            \vspace{6cm}
-            \centering\Large\textcolor{CLSDarkGray}{%
-              Place your main figure here\\[0.5em]
-              \normalsize\texttt{%
-                \textbackslash includegraphics[width=0.9\textbackslash linewidth]%
-                \{images/main\_result.png\}%
-              }%
-            }
-            \vspace{6cm}
-          }%
-        }
-        \caption{%
-          Description of the main result figure.
-          Replace the placeholder above with your figure file.%
-        }
-      \end{figure}
+  % --- Col 2: Collocation example ---
+  \begin{column}{0.36\linewidth}
+    \begin{clshighlight}{Collocation Example --- Gulf of Mexico}
+      \centering
+      \includegraphics[width=0.92\linewidth]{images/collocation_example.png}
+
+      \small Left to right: SWOT $\sigma_0$, NEXRAD DPR (mm/h),
+      U-Net prediction (mm/h), ERA5 (mm/h).
+      Rain signatures retrieved at 250~m resolution.
+    \end{clshighlight}
+  \end{column}
+
+  % --- Col 3: Global map ---
+  \begin{column}{0.31\linewidth}
+    \begin{clshighlight}{Global Mean Rainfall Rate}
+      \centering
+      \includegraphics[width=0.92\linewidth]{images/mollweide_mean_rainfall.png}
+
+      \small Mean predicted rain rate (mm/h), 1.0$^\circ$ grid,
+      12\,007 passes. ITCZ clearly visible. Spatial patterns
+      coherent with climatology.
     \end{clshighlight}
   \end{column}
 
 \end{columns}
 
-\vspace{0.4cm}
+\vspace{0.2cm}
 
-% ---------------------------------------------------------------------------
-% Row 2: Results (1/3) | Results cont. (1/3) | Conclusions + Refs (1/3)
-% ---------------------------------------------------------------------------
+% ===================== ROW 2 =====================
 \begin{columns}[T]
 
-  \begin{column}{0.32\linewidth}
-    \begin{clsblock}{Results}
-      \centering
-      \begin{table}
-        \begin{tabular}{lccc}
-          \toprule
-          \textbf{Method} & \textbf{RMSE} & \textbf{Bias} & \textbf{R\textsuperscript{2}} \\
-          \midrule
-          Baseline     & 2.45 & $-$0.12 & 0.78 \\
-          Proposed     & 1.87 & $-$0.03 & 0.91 \\
-          State of art & 2.10 &    0.05 & 0.85 \\
-          \bottomrule
-        \end{tabular}
-        \caption{Quantitative comparison of methods.}
-      \end{table}
+  % --- Col 1: Confusion + Coverage ---
+  \begin{column}{0.31\linewidth}
+    \begin{clsblock}{Classification \& Coverage}
+      \begin{columns}[T]
+        \begin{column}{0.48\linewidth}
+          \centering
+          \includegraphics[width=\linewidth]{images/confusion_ensemble.png}
+        \end{column}
+        \begin{column}{0.48\linewidth}
+          \centering
+          \includegraphics[width=\linewidth]{images/nexrad_coverage.png}
+        \end{column}
+      \end{columns}
+      \vspace{0.1cm}
 
-      \justifying
-      \begin{itemize}
-        \item Key finding 1 with quantitative evidence;
-        \item Key finding 2 comparing to baseline;
-        \item Key finding 3 discussing limitations.
-      \end{itemize}
+      \small
+      \textbf{Left:} Ensemble confusion matrix (column-normalized).
+      Categories: [0--1), [1--10), $\geq$10~mm/h.
+      \textbf{67\% accuracy}, comparable to dual-station NEXRAD consistency.
+      \textbf{Right:} Geographic distribution of training collocations.
     \end{clsblock}
   \end{column}
 
-  \begin{column}{0.32\linewidth}
-    \begin{clsblock}{Results (continued)}
-      \begin{figure}
-        \centering
-        \fcolorbox{CLSBlue}{CLSLightGray}{%
-          \parbox{0.85\linewidth}{%
-            \vspace{4cm}
-            \centering\normalsize\textcolor{CLSDarkGray}{%
-              Secondary figure placeholder%
-            }
-            \vspace{4cm}
-          }%
-        }
-        \caption{Description of secondary result.}
-      \end{figure}
+  % --- Col 2: Time series ---
+  \begin{column}{0.36\linewidth}
+    \begin{clsblock}{IMERG Time Series Validation}
+      \begin{columns}[T]
+        \begin{column}{0.32\linewidth}
+          \centering
+          \includegraphics[width=\linewidth]{images/timeseries_itcz_pacific.png}
 
-      \begin{itemize}
-        \item Additional analysis or sensitivity study;
-        \item Comparison with independent validation data;
-        \item Discussion of regional or temporal patterns.
-      \end{itemize}
+          \small Pacific ITCZ\\ \textbf{r\,=\,95\%}
+        \end{column}
+        \begin{column}{0.32\linewidth}
+          \centering
+          \includegraphics[width=\linewidth]{images/timeseries_itcz_atlantic.png}
+
+          \small Atlantic ITCZ\\ \textbf{r\,=\,75\%}
+        \end{column}
+        \begin{column}{0.32\linewidth}
+          \centering
+          \includegraphics[width=\linewidth]{images/timeseries_north_atlantic.png}
+
+          \small N.~Atlantic\\ \textbf{r\,=\,$-$43\%}
+        \end{column}
+      \end{columns}
+      \vspace{0.1cm}
+
+      \small 21-day moving average of mean rain rate (mm/h).
+      Strong IMERG agreement in the tropics; degradation at
+      mid-latitudes suggests sensitivity to convective vs.\
+      stratiform regimes.
     \end{clsblock}
   \end{column}
 
-  \begin{column}{0.32\linewidth}
-    \begin{clsblock}{Conclusions}
-      \begin{itemize}
-        \item Summarize the main contribution;
-        \item Highlight the improvement over existing methods;
-        \item Mention practical implications.
-      \end{itemize}
-
-      \textbf{Perspectives:}
-      \begin{itemize}
-        \item Future direction 1;
-        \item Future direction 2;
-        \item Planned extensions of the work.
+  % --- Col 3: Conclusions + Refs ---
+  \begin{column}{0.31\linewidth}
+    \begin{clsblock}{Conclusions \& Perspectives}
+      \begin{itemize}\setlength{\itemsep}{1pt}
+        \item Ka-band precipitation at \textbf{250~m} demonstrated,
+              effective in tropical regions
+        \item Ensemble: \textbf{67\%} categorical accuracy;
+              IMERG r\,=\,95\% (Pacific ITCZ)
+        \item Open question: quality outside tropics ---
+              convective vs.\ stratiform regime sensitivity
+        \item Perspectives: Sentinel-1 C-band synergy~[4],
+              standard SWOT product integration,
+              data-sparse ocean coverage
       \end{itemize}
     \end{clsblock}
 
-    \vspace{0.4cm}
+    \vspace{0.15cm}
 
-    \begin{clsblock}{References}
-      % For biblatex: replace with \printbibliography[heading=none]
-      \begin{thebibliography}{9}
-        \bibitem{sample2024}
-          A.~Author and B.~Coauthor,
-          ``A sample reference for poster template demonstration,''
-          \textit{J. Example Studies}, vol.~1, pp.~1--10, 2024.
+    \begin{clsblock}{References \& Acknowledgements}
+      \footnotesize
+      [1]~T.~D.~Crum, R.~L.~Alberty,
+      \textit{Bull. Am. Meteorol. Soc.}, 74(9), 1993.\\
+      {[2]}~G.~J.~Huffman \textit{et al.},
+      NASA GPM IMERG ATBD v06, 2019.\\
+      {[3]}~R.~Morrow \textit{et al.},
+      \textit{Front. Mar. Sci.}, 6:232, 2019.\\
+      {[4]}~A.~Mouche \textit{et al.},
+      \textit{Proc. IGARSS}, 2017.
 
-        \bibitem{sample2023}
-          C.~Researcher,
-          ``Conference paper example,''
-          in \textit{Proc. Int. Conf. Examples}, 2023, pp.~100--105.
-      \end{thebibliography}
-    \end{clsblock}
-
-    \vspace{0.4cm}
-
-    \begin{clsblock}{Acknowledgements}
-      This work was supported by \ldots
+      \vspace{0.15cm}
+      CLS with CNES support. SWOT: NASA/CNES.
+      NEXRAD: NOAA. IMERG: NASA GES DISC.
     \end{clsblock}
   \end{column}
 

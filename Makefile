@@ -5,7 +5,7 @@ MAIN = main
 
 pdf: $(MAIN).pdf
 
-$(MAIN).pdf: $(MAIN).tex clsposter.sty references.bib images/cls_logo.png
+$(MAIN).pdf: $(MAIN).tex clsposter.sty references.bib $(wildcard images/*.png)
 	$(TECTONIC) $(MAIN).tex
 
 clean:
