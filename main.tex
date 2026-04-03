@@ -132,11 +132,11 @@
 \begin{frame}{}
 
 % Reduce header height to close gap between logos and title
-\setlength{\posterheaderheight}{15cm}
+\setlength{\posterheaderheight}{16cm}
 \setlength{\posterfooterheight}{3cm}
 \setlength{\posterfooterlogoheight}{2cm}
 \maketitle
-\vspace{-0.8cm}
+\vspace{-2.2cm}
 
 % ===================== ROW 1 =====================
 % [Introduction + Methods] | [Data with maps] | [Quantitative Evaluation]
@@ -217,7 +217,7 @@
       \hfill
       \begin{minipage}[t]{0.43\linewidth}
         \centering
-        \includegraphics[width=\linewidth]{images/geo_distribution_asia.png}
+        \includegraphics[height=14.5cm]{images/geo_distribution_asia.png}
       \end{minipage}
 
       \vspace{0.2cm}
@@ -281,12 +281,12 @@
 
   % --- Col 1: Inference at 250 m (highlight) ---
   \begin{column}{0.32\linewidth}
-    \begin{clshighlight}{Inference at 250~m/pixel}
+    \begin{clsblock}{Inference at 250~m/pixel}
       \centering
       \includegraphics[width=0.95\linewidth]{images/inference_250m.png}
 
       \vspace{0.15cm}
-      \includegraphics[width=0.95\linewidth]{images/inference_dpr_250m.png}
+      \includegraphics[width=0.82\linewidth]{images/inference_dpr_250m.png}
 
       \vspace{0.2cm}
       Cycle 17, Pass 81 (June 2024).
@@ -294,7 +294,7 @@
       precipitation rate (mm/h) with consensus score (lower is better).
       \textbf{Bottom:} Collocated NEXRAD Digital Precipitation Rate
       for validation.
-    \end{clshighlight}
+    \end{clsblock}
   \end{column}
 
   % --- Col 2: Applicability to Open Ocean ---
