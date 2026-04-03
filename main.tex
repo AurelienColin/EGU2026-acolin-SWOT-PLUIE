@@ -165,32 +165,41 @@
 
     \begin{clsblock}{Methods}
       \textbf{Architecture.}
-      U-Net (depth=4, Swish, BatchNorm).
-      Inputs: $\sigma_0$ (dB), coherence, incidence angle,
-      model wind speed. Output: precipitation rate (mm/h).
+      U-Net encoder--decoder (depth=4, Swish activation, BatchNorm).
+      Four input channels: incidence-corrected $\sigma_0$ (dB),
+      total coherence, incidence angle, and model wind speed
+      projected from the 2~km SWOT product.
+      Output: pixel-wise precipitation rate (mm/h).
 
       \vspace{0.2cm}
-      \textbf{Training.}
-      Loss: MAE (99\%) + categorical MAE (1\%).
-      Pixel weights decay with distance to nearest NEXRAD station.
-      Quantile mapping aligns output with NEXRAD.
+      \textbf{Training strategy.}
+      Combined loss: regression MAE (99\%) + categorical MAE (1\%).
+      Pixel weights decay linearly with distance to nearest NEXRAD
+      station (weight 1 at 0~km, 0 at 225~km); null-DPR pixels
+      down-weighted to 0.1\%.
+      Quantile mapping post-processing aligns the output distribution
+      with NEXRAD.
 
       \vspace{0.2cm}
       \textbf{Ensemble.}
-      Five independent models; consensus score provides prediction
-      confidence.
+      Five independently trained models; the consensus score
+      (inter-model disagreement) provides a spatially-resolved
+      proxy for prediction confidence.
     \end{clsblock}
   \end{column}
 
   % --- Col 2: Data ---
   \begin{column}{0.34\linewidth}
     \begin{clsblock}{Data}
+      \textbf{Training dataset.}
       \textbf{7\,009} NEXRAD/SWOT collocated patches
-      (512$\times$512~px at 250~m/pixel), Aug 2023--Feb 2025.
-      \textbf{1\,090} contain precipitation
-      ($>$1~mm/h on $>$1\% of pixels).
-      Constraints: $<$3~min temporal offset,
-      $<$170~km from a WSR-88D station.
+      (512$\times$512~px at 250~m/pixel), spanning Aug 2023 to
+      Feb 2025. Of these, \textbf{1\,090} patches contain
+      precipitation ($>$1~mm/h on $>$1\% of pixels).
+      Collocation constraints: $<$3~min temporal offset,
+      $<$170~km range from a WSR-88D station.
+      Ground truth is the NEXRAD Digital Precipitation Rate (DPR)
+      product, interpolated onto the SWOT grid.
 
       \vspace{0.3cm}
       \noindent
@@ -240,8 +249,10 @@
   % --- Col 1: Quantitative Evaluation ---
   \begin{column}{0.32\linewidth}
     \begin{clsblock}{Quantitative Evaluation}
-      Categorical accuracy on three classes: [0--1), [1--10),
-      and $\geq$10~mm/h. Ensemble: \textbf{68.4\%} accuracy.
+      Categorical accuracy is evaluated on three precipitation
+      classes: [0--1), [1--10), and $\geq$10~mm/h.
+      The ensemble reaches \textbf{68.4\%} accuracy, a marginal
+      improvement over individual models (63.6--68.0\%).
 
       \vspace{0.2cm}
       \centering
@@ -259,12 +270,19 @@
 
       \vspace{0.2cm}
       \justifying
-      Rain-free: 94.1\%. Heavy rain ($\geq$10~mm/h): 65.4\%.
-      Moderate rainfall is hardest (33.4\% confused with heavy).
+      The model accurately identifies rain-free areas (94.1\%).
+      Heavy rainfall ($\geq$10~mm/h) is detected with 65.4\%
+      accuracy. Moderate rainfall ([1--10)~mm/h) is the hardest
+      class, with 33.4\% misclassified as heavy rain.
 
       \vspace{0.2cm}
-      Ensemble accuracy comparable to inter-station consistency
-      of two independent NEXRAD radars~[1].
+      The ensemble consensus score filters low-confidence
+      predictions: retaining only pixels with high inter-model
+      agreement improves categorical accuracy to $>$75\%.
+
+      \vspace{0.2cm}
+      This \textbf{68\%} ensemble accuracy is comparable to the
+      consistency between two independent NEXRAD stations~[1].
     \end{clsblock}
   \end{column}
 
@@ -272,7 +290,7 @@
   \begin{column}{0.34\linewidth}
     \begin{clsblock}{Applicability to Open Ocean}
       \centering
-      \includegraphics[width=0.70\linewidth]{images/mollweide_pct_above_1mmh.png}
+      \includegraphics[width=0.65\linewidth]{images/mollweide_pct_above_1mmh.png}
 
       \justifying
       Percentage of pixels $>$1~mm/h (1$^\circ$ grid, 12\,007 passes).
@@ -284,19 +302,19 @@
       \begin{minipage}[t]{0.31\linewidth}
         \centering
         \includegraphics[width=\linewidth]{images/timeseries_itcz_pacific.png}\\[2pt]
-        Pacific ITCZ\\ \textbf{r\,=\,95\%}
+        Pacific ITCZ --- \textbf{r\,=\,95\%}
       \end{minipage}%
       \hfill
       \begin{minipage}[t]{0.31\linewidth}
         \centering
         \includegraphics[width=\linewidth]{images/timeseries_itcz_atlantic.png}\\[2pt]
-        Atlantic ITCZ\\ \textbf{r\,=\,75\%}
+        Atlantic ITCZ --- \textbf{r\,=\,75\%}
       \end{minipage}%
       \hfill
       \begin{minipage}[t]{0.31\linewidth}
         \centering
         \includegraphics[width=\linewidth]{images/timeseries_north_atlantic.png}\\[2pt]
-        North Atlantic\\ \textbf{r\,=\,$-$43\%}
+        North Atlantic --- \textbf{r\,=\,$-$43\%}
       \end{minipage}
 
       \vspace{0.2cm}
@@ -311,17 +329,22 @@
   \begin{column}{0.32\linewidth}
     \begin{clsblock}{Perspectives}
       \begin{itemize}\setlength{\itemsep}{6pt}
-        \item SWOT KaRIn at 250~m/pixel can estimate precipitation
-              over the open ocean, where no ground-based coverage exists.
+        \item SWOT KaRIn observations at 250~m/pixel can be exploited
+              to estimate precipitation rates over the open ocean,
+              where no ground-based radar coverage exists.
 
         \item \textbf{Open question:} performance degrades at
-              mid-latitudes (r\,=\,$-$43\%), suggesting reduced
-              sensitivity to stratiform precipitation.
+              mid-latitudes (North Atlantic: r\,=\,$-$43\%),
+              suggesting reduced sensitivity to stratiform
+              precipitation. Further investigation is needed to
+              characterize this limitation and identify the
+              transition between convective and stratiform regimes.
 
-        \item Consistent with C-band SAR retrievals from
-              Sentinel-1~[4]. Integration into the standard SWOT
-              product would unlock precipitation data in data-sparse
-              oceanic regions.
+        \item These results are consistent with C-band SAR rainfall
+              retrievals from the Sentinel-1 constellation~[4].
+              Integration into the standard SWOT unsmoothed product
+              is under discussion, which would unlock precipitation
+              data in data-sparse oceanic regions.
       \end{itemize}
     \end{clsblock}
 
