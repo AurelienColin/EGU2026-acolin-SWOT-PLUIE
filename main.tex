@@ -136,7 +136,7 @@
 \setlength{\posterfooterheight}{3cm}
 \setlength{\posterfooterlogoheight}{2cm}
 \maketitle
-\vspace{-2.2cm}
+\vspace{-1.5cm}
 
 % ===================== ROW 1 =====================
 % [Introduction + Methods] | [Data with maps] | [Quantitative Evaluation]
@@ -236,7 +236,7 @@
       patches, never seen during training). Ensemble prediction
       is the mean of five independent models.
 
-      \vspace{0.2cm}
+      \vspace{0.3cm}
       \centering
       \begin{tabular}{l@{\hspace{0.4cm}}ccc}
         \toprule
@@ -250,7 +250,7 @@
         \bottomrule
       \end{tabular}
 
-      \vspace{0.2cm}
+      \vspace{0.3cm}
       \justifying
       \begin{itemize}\setlength{\itemsep}{3pt}
         \item Rain-free areas: \textbf{94.1\%} accuracy. Heavy
@@ -273,7 +273,7 @@
 
 \end{columns}
 
-\vspace{-0.3cm}
+\vspace{0.1cm}
 
 % ===================== ROW 2 =====================
 % [Inference highlight] | [Applicability to Open Ocean] | [Perspectives + Refs]
@@ -286,7 +286,8 @@
       \includegraphics[width=0.95\linewidth]{images/inference_250m.png}
 
       \vspace{0.15cm}
-      \includegraphics[width=0.82\linewidth]{images/inference_dpr_250m.png}
+      % DPR plot grid-aligned with sigma0: width=0.937, offset=0.012 from left
+      {\raggedright\hspace{0.012\linewidth}\includegraphics[width=0.937\linewidth]{images/inference_dpr_250m.png}\par}
 
       \vspace{0.2cm}
       Cycle 17, Pass 81 (June 2024).
