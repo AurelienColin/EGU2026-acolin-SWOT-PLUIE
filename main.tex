@@ -55,13 +55,14 @@
     draw=CLSBlue, line width=2pt,
     fill=CLSLightGray,
     rounded corners=5mm,
-    inner sep=10pt
+    inner sep=10pt,
+    text=CLSDarkGray
   ] (blockbox) \bgroup
     \begin{minipage}{0.93\linewidth}
       \vspace{0.2cm}
       {\centering\LARGE\bfseries\textcolor{CLSBlue}{#1}\par}
       \vspace{0.25cm}
-      \justifying
+      \justifying\color{CLSDarkGray}
 }{%
       \vspace{0.15cm}
     \end{minipage}
@@ -78,13 +79,14 @@
     draw=CLSTeal, line width=2pt,
     fill=CLSTeal!10,
     rounded corners=5mm,
-    inner sep=10pt
+    inner sep=10pt,
+    text=CLSDarkGray
   ] (blockbox) \bgroup
     \begin{minipage}{0.93\linewidth}
       \vspace{0.2cm}
       {\centering\LARGE\bfseries\textcolor{CLSTeal}{#1}\par}
       \vspace{0.25cm}
-      \justifying
+      \justifying\color{CLSDarkGray}
 }{%
       \vspace{0.2cm}
     \end{minipage}
