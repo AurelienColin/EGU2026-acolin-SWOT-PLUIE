@@ -143,44 +143,48 @@
   % --- Col 1: Introduction + Methods (stacked) ---
   \begin{column}{0.32\linewidth}
     \begin{clsblock}{Introduction}
-      \textbf{What} --- A resolution gap separates ground-based rain
-      radars (250~m, coastal only) from satellite products
-      (IMERG~[2]: $\sim$8~km, global). No instrument covers the
-      open ocean at sub-kilometer scale.
+      \begin{itemize}\setlength{\itemsep}{4pt}
+        \item \textbf{What} --- A resolution gap separates ground-based
+              rain radars (250~m, coastal only) from satellite products
+              (IMERG~[2]: $\sim$8~km, global). No instrument covers the
+              open ocean at sub-kilometer scale.
 
-      \vspace{0.2cm}
-      \textbf{Why} --- The SWOT mission~[3] carries KaRIn, a Ka-band
-      SAR at 35.75~GHz with \textbf{250~m/pixel} resolution.
-      Ka-band backscatter is highly sensitive to atmospheric
-      hydrometeors---an unexploited opportunity for precipitation
-      estimation over the open ocean.
+        \item \textbf{Why} --- The SWOT mission~[3] carries KaRIn, a
+              Ka-band SAR at 35.75~GHz with \textbf{250~m/pixel}
+              resolution. Ka-band backscatter is highly sensitive to
+              atmospheric hydrometeors---an unexploited opportunity for
+              precipitation estimation over the open ocean.
 
-      \vspace{0.2cm}
-      \textbf{How} --- A machine learning framework trained on
-      NEXRAD~[1] collocations extracts pixel-wise precipitation rates,
-      validated with independent IMERG time series.
+        \item \textbf{How} --- A machine learning framework trained on
+              NEXRAD~[1] collocations extracts pixel-wise precipitation
+              rates, validated with independent IMERG time series.
+      \end{itemize}
     \end{clsblock}
 
     \vspace{-0.3cm}
 
     \begin{clsblock}{Methods}
       \textbf{Architecture.}
-      U-Net encoder--decoder (depth=4, Swish activation, BatchNorm).
-      Four input channels: incidence-corrected $\sigma_0$ (dB),
-      total coherence, incidence angle, and model wind speed
-      projected from the 2~km SWOT product.
-      Output: pixel-wise precipitation rate (mm/h).
+      \begin{itemize}\setlength{\itemsep}{2pt}
+        \item U-Net encoder--decoder (depth=4, Swish activation,
+              BatchNorm).
+        \item Four input channels: incidence-corrected $\sigma_0$ (dB),
+              total coherence, incidence angle, and model wind speed
+              projected from the 2~km SWOT product.
+        \item Output: pixel-wise precipitation rate (mm/h).
+      \end{itemize}
 
-      \vspace{0.2cm}
+      \vspace{0.1cm}
       \textbf{Training strategy.}
-      Combined loss: regression MAE (99\%) + categorical MAE (1\%).
-      Pixel weights decay linearly with distance to nearest NEXRAD
-      station (weight 1 at 0~km, 0 at 225~km); null-DPR pixels
-      down-weighted to 0.1\%.
-      Quantile mapping post-processing aligns the output distribution
-      with NEXRAD.
+      \begin{itemize}\setlength{\itemsep}{2pt}
+        \item Loss: regression MAE (99\%) + categorical MAE (1\%).
+        \item Pixel weights decay linearly with distance to nearest
+              NEXRAD station (weight 1 at 0~km, 0 at 225~km);
+              null-DPR pixels down-weighted to 0.1\%.
+        \item Quantile mapping aligns output distribution with NEXRAD.
+      \end{itemize}
 
-      \vspace{0.2cm}
+      \vspace{0.1cm}
       \textbf{Ensemble.}
       Five independently trained models; the consensus score
       (inter-model disagreement) provides a spatially-resolved
@@ -191,15 +195,16 @@
   % --- Col 2: Data ---
   \begin{column}{0.34\linewidth}
     \begin{clsblock}{Data}
-      \textbf{Training dataset.}
-      \textbf{7\,009} NEXRAD/SWOT collocated patches
-      (512$\times$512~px at 250~m/pixel), spanning Aug 2023 to
-      Feb 2025. Of these, \textbf{1\,090} patches contain
-      precipitation ($>$1~mm/h on $>$1\% of pixels).
-      Collocation constraints: $<$3~min temporal offset,
-      $<$170~km range from a WSR-88D station.
-      Ground truth is the NEXRAD Digital Precipitation Rate (DPR)
-      product, interpolated onto the SWOT grid.
+      \begin{itemize}\setlength{\itemsep}{2pt}
+        \item \textbf{7\,009} NEXRAD/SWOT collocated patches
+              (512$\times$512~px at 250~m/pixel), Aug 2023--Feb 2025.
+        \item \textbf{1\,090} patches contain precipitation
+              ($>$1~mm/h on $>$1\% of pixels).
+        \item Collocation constraints: $<$3~min temporal offset,
+              $<$170~km range from a WSR-88D station.
+        \item Ground truth: NEXRAD Digital Precipitation Rate (DPR),
+              interpolated onto the SWOT grid.
+      \end{itemize}
 
       \vspace{0.3cm}
       \noindent
@@ -224,18 +229,12 @@
   % --- Col 3: Quantitative Evaluation ---
   \begin{column}{0.32\linewidth}
     \begin{clsblock}{Quantitative Evaluation}
-      \textbf{Evaluation protocol.}
-      Categorical accuracy is evaluated on three precipitation
-      classes: [0--1), [1--10), and $\geq$10~mm/h, using a
-      spatially held-out test set (20\% of patches, never seen
-      during training). Each of the five ensemble members is
-      evaluated independently; the ensemble prediction is the
-      mean of all five outputs.
+      Categorical accuracy on three classes: [0--1), [1--10),
+      and $\geq$10~mm/h. Spatially held-out test set (20\% of
+      patches, never seen during training). Ensemble prediction
+      is the mean of five independent models.
 
       \vspace{0.2cm}
-      \textbf{Confusion matrix} (column-normalized, ensemble):
-
-      \vspace{0.1cm}
       \centering
       \begin{tabular}{l@{\hspace{0.4cm}}ccc}
         \toprule
@@ -251,27 +250,22 @@
 
       \vspace{0.2cm}
       \justifying
-      \textbf{Key findings.}
-      The model accurately identifies rain-free areas (94.1\%).
-      Heavy rainfall ($\geq$10~mm/h) is detected with 65.4\%
-      accuracy. Moderate rainfall ([1--10)~mm/h) is the hardest
-      class, with 33.4\% misclassified as heavy rain---likely
-      because moderate-to-heavy transitions are continuous rather
-      than discrete.
-
-      \vspace{0.2cm}
-      \textbf{Ensemble benefit.}
-      The ensemble reaches \textbf{68.4\%} accuracy, improving over
-      individual models (63.6--68.0\%). The consensus score filters
-      low-confidence predictions: retaining only pixels with high
-      inter-model agreement improves accuracy to $>$75\%.
-
-      \vspace{0.2cm}
-      \textbf{Benchmark.}
-      This 68\% accuracy is comparable to the consistency between
-      two independent NEXRAD stations~[1], suggesting the model
-      has reached the practical ceiling imposed by reference
-      measurement uncertainty.
+      \begin{itemize}\setlength{\itemsep}{3pt}
+        \item Rain-free areas: \textbf{94.1\%} accuracy. Heavy
+              rainfall ($\geq$10~mm/h): \textbf{65.4\%}.
+        \item Moderate rainfall ([1--10)~mm/h) is the hardest class,
+              with 33.4\% misclassified as heavy rain---likely because
+              moderate-to-heavy transitions are continuous.
+        \item Ensemble reaches \textbf{68.4\%} accuracy, improving
+              over individual models (63.6--68.0\%).
+        \item Consensus score filters low-confidence predictions:
+              retaining high-agreement pixels improves accuracy
+              to $>$75\%.
+        \item This 68\% accuracy is comparable to the consistency
+              between two independent NEXRAD stations~[1], suggesting
+              the model has reached the practical ceiling imposed by
+              reference measurement uncertainty.
+      \end{itemize}
     \end{clsblock}
   \end{column}
 
