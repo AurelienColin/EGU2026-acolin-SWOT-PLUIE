@@ -137,7 +137,7 @@
 \vspace{-0.8cm}
 
 % ===================== ROW 1 =====================
-% [Introduction + Methods stacked] | [Data with maps] | [Inference highlight]
+% [Introduction + Methods] | [Data with maps] | [Quantitative Evaluation]
 \begin{columns}[T]
 
   % --- Col 1: Introduction + Methods (stacked) ---
@@ -221,40 +221,21 @@
     \end{clsblock}
   \end{column}
 
-  % --- Col 3: Inference ---
-  \begin{column}{0.32\linewidth}
-    \begin{clshighlight}{Inference at 250~m/pixel}
-      \centering
-      \includegraphics[width=0.95\linewidth]{images/inference_250m.png}
-
-      \vspace{0.15cm}
-      \includegraphics[width=0.95\linewidth]{images/inference_dpr_250m.png}
-
-      \vspace{0.2cm}
-      Cycle 17, Pass 81 (June 2024).
-      \textbf{Top:} SWOT $\sigma_0$ and ensemble precipitation
-      rate (mm/h) with consensus score.
-      \textbf{Bottom:} NEXRAD ground truth.
-    \end{clshighlight}
-  \end{column}
-
-\end{columns}
-
-\vspace{-0.3cm}
-
-% ===================== ROW 2 =====================
-% [Quantitative Evaluation] | [Applicability to Open Ocean] | [Perspectives]
-\begin{columns}[T]
-
-  % --- Col 1: Quantitative Evaluation ---
+  % --- Col 3: Quantitative Evaluation ---
   \begin{column}{0.32\linewidth}
     \begin{clsblock}{Quantitative Evaluation}
+      \textbf{Evaluation protocol.}
       Categorical accuracy is evaluated on three precipitation
-      classes: [0--1), [1--10), and $\geq$10~mm/h.
-      The ensemble reaches \textbf{68.4\%} accuracy, a marginal
-      improvement over individual models (63.6--68.0\%).
+      classes: [0--1), [1--10), and $\geq$10~mm/h, using a
+      spatially held-out test set (20\% of patches, never seen
+      during training). Each of the five ensemble members is
+      evaluated independently; the ensemble prediction is the
+      mean of all five outputs.
 
       \vspace{0.2cm}
+      \textbf{Confusion matrix} (column-normalized, ensemble):
+
+      \vspace{0.1cm}
       \centering
       \begin{tabular}{l@{\hspace{0.4cm}}ccc}
         \toprule
@@ -270,20 +251,54 @@
 
       \vspace{0.2cm}
       \justifying
+      \textbf{Key findings.}
       The model accurately identifies rain-free areas (94.1\%).
       Heavy rainfall ($\geq$10~mm/h) is detected with 65.4\%
       accuracy. Moderate rainfall ([1--10)~mm/h) is the hardest
-      class, with 33.4\% misclassified as heavy rain.
+      class, with 33.4\% misclassified as heavy rain---likely
+      because moderate-to-heavy transitions are continuous rather
+      than discrete.
 
       \vspace{0.2cm}
-      The ensemble consensus score filters low-confidence
-      predictions: retaining only pixels with high inter-model
-      agreement improves categorical accuracy to $>$75\%.
+      \textbf{Ensemble benefit.}
+      The ensemble reaches \textbf{68.4\%} accuracy, improving over
+      individual models (63.6--68.0\%). The consensus score filters
+      low-confidence predictions: retaining only pixels with high
+      inter-model agreement improves accuracy to $>$75\%.
 
       \vspace{0.2cm}
-      This \textbf{68\%} ensemble accuracy is comparable to the
-      consistency between two independent NEXRAD stations~[1].
+      \textbf{Benchmark.}
+      This 68\% accuracy is comparable to the consistency between
+      two independent NEXRAD stations~[1], suggesting the model
+      has reached the practical ceiling imposed by reference
+      measurement uncertainty.
     \end{clsblock}
+  \end{column}
+
+\end{columns}
+
+\vspace{-0.3cm}
+
+% ===================== ROW 2 =====================
+% [Inference highlight] | [Applicability to Open Ocean] | [Perspectives + Refs]
+\begin{columns}[T]
+
+  % --- Col 1: Inference at 250 m (highlight) ---
+  \begin{column}{0.32\linewidth}
+    \begin{clshighlight}{Inference at 250~m/pixel}
+      \centering
+      \includegraphics[width=0.95\linewidth]{images/inference_250m.png}
+
+      \vspace{0.15cm}
+      \includegraphics[width=0.95\linewidth]{images/inference_dpr_250m.png}
+
+      \vspace{0.2cm}
+      Cycle 17, Pass 81 (June 2024).
+      \textbf{Top:} SWOT $\sigma_0$ (left swath) and ensemble mean
+      precipitation rate (mm/h) with consensus score (lower is better).
+      \textbf{Bottom:} Collocated NEXRAD Digital Precipitation Rate
+      for validation.
+    \end{clshighlight}
   \end{column}
 
   % --- Col 2: Applicability to Open Ocean ---
@@ -325,7 +340,7 @@
     \end{clsblock}
   \end{column}
 
-  % --- Col 3: Perspectives ---
+  % --- Col 3: Perspectives + References ---
   \begin{column}{0.32\linewidth}
     \begin{clsblock}{Perspectives}
       \begin{itemize}\setlength{\itemsep}{6pt}
